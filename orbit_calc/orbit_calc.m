@@ -25,6 +25,11 @@ for coeffs in CartesianPower(k, 10) do
 end for;
 #polys;
 
+// store degree3 polynomials
+file := Open("deg3Polys.m", "w");
+Puts(file, "deg3PolyList := " cat Sprint(polys) cat ";");
+Flush(file);
+
 // create list of lists for orbits
 orbitsList := [];
 
@@ -44,40 +49,6 @@ for p in polys do
         for M in G do
             orbitp := x*M;
             Append(~orbit, orbitp);
-            i := Index(uniqueOrbitPolys, orbitp);
-            if i ne 0 then
-                Remove(~uniqueOrbitPolys, i);
-            end if;
-        end for;
-        Append(~orbitsList, orbit);
-    end if;
-end for;
-
-#orbitsList;
-
-W,g:=GModule(G,R,6);
-
-uniqueOrbitPolys := [];
-for w in W do
-    Append(~uniqueOrbitPolys, w);
-end for;
-#uniqueOrbitPolys;
-
-for w in W do
-    orbit := [];
-    if w in uniqueOrbitPolys then
-        Append(orbit, w);
-        for a in uniqueOrbitPolys do
-            for M in G do
-                for c in polys do
-                    term := a*M;
-                    termPoly := term@@f;
-                    termPoly := termPoly*c + c*c;
-                    term2 := w*M;
-                    termPoly := term2@@g + termPoly;
-                    orbitp := g(termPoly);
-                end for;
-            end for;
             i := Index(uniqueOrbitPolys, orbitp);
             if i ne 0 then
                 Remove(~uniqueOrbitPolys, i);
