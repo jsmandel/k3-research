@@ -34,24 +34,26 @@ Flush(file);
 orbitsList := [];
 
 // store polynomials we haven't seen
+orbitPolys := [];
 uniqueOrbitPolys := [];
 for p in polys do
-    v := f(p);
-    Append(~uniqueOrbitPolys, v);
+    Append(~orbitPolys, p);
 end for;
 
 // calculate orbits
 for p in polys do
     orbit := [];
-    x := f(p);
-    if x in uniqueOrbitPolys then
-        Append(orbit, x);
+    if p in orbitPolys then
+        Append(~orbit, p);
+        Append(~uniqueOrbitPolys, p);
         for M in G do
+            x := f(p);
             orbitp := x*M;
-            Append(~orbit, orbitp);
-            i := Index(uniqueOrbitPolys, orbitp);
+            xPoly := orbitp@@f;
+            Append(~orbit, xPoly);
+            i := Index(orbitPolys, xPoly);
             if i ne 0 then
-                Remove(~uniqueOrbitPolys, i);
+                Remove(~orbitPolys, i);
             end if;
         end for;
         Append(~orbitsList, orbit);
@@ -59,3 +61,7 @@ for p in polys do
 end for;
 
 #orbitsList;
+
+file := Open("uniqueOrbitPolys3.m", "w");
+Puts(file, "uniqueOrbitList3 := " cat Sprint(uniqueOrbitPolys) cat ";");
+Flush(file);
