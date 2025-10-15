@@ -45,17 +45,18 @@ for a in GVorbreps do
         Append(~orbitsList, orbit);
         num_orbits := num_orbits + #orbit;
     else
+        stabG;
         W, g := GModule(stabG, R, 6);
         // GW := ActionGroup(W);
 
-        // Wa := sub<W | [g((a@@f)*(c@@f) + (c@@f)^2) : c in V]>;
-        // Q, q := quo<W | Wa>;
+        Wa := sub<W | [g((a@@f)*(c@@f) + (c@@f)^2) : c in V]>;
+        Q, q := quo<W | Wa>;
         // GQ := ActionGroup(Q);
 
         orbitRep := [*a*];
         Append(~orbitRep, Random(W));
         Append(~orbitRepList, orbitRep);
-        num_orbits := num_orbits + 1;  // for now
+        num_orbits := num_orbits + #Q;  // for now
     end if;
 
 end for;
@@ -70,5 +71,3 @@ f := Open("orbitReps2.m", "w");
 Puts(f, "orbitRepList := " cat Sprint(orbitRepList, "Magma") cat ";");
 Flush(f);
 num_orbits;
-
-orbitRepList[5];
