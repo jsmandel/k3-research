@@ -56,6 +56,7 @@ for a in GVorbreps do
         end for;
         num_orbits := num_orbits + #orbit;
     else
+        W, g := GModule(stabG, R, 6);
         b := Random(W);
         bp := b@@q;
         surface_poly:=w^2+ap*w+bp;
