@@ -3,6 +3,8 @@ G := GL(3, k);
 R<[x]> := PolynomialRing(k,3);
 V, f := GModule(G, R, 3);
 GV := ActionGroup(V);
+AttachSpec("../orbit_calc/k3.spec");
+load "../surface_analysis/smooth.m";
 
 /* The following functions are for point counting. The first function calculates the orbits
 of the Frobenius map in a field K. It returns a representative for each orbit, as well
@@ -105,43 +107,6 @@ PointCount := function(FieldCardinality,L,M)
         return (s1 + s2 + s3);
 end function;
 
-// Computes the orbits of G on the degree 3 polynomials
-GVorbits := Orbits(GV);
-
-// Returns a list of orbit representatives, as vectors
-GVorbreps := [GVorbits[i][1] : i in [1..#GVorbits]];
-
-// Returns a list of orbit representatives, as polynomials
-GVorbrepspoly := [(GVorbreps[i])@@f : i in [1..#GVorbreps]];
-
-for a in GVorbreps do
-    ap := a@@f;
-    
-    stabA := Stabilizer(GV, a); // stabilizer of a
-    gvMap := GModuleAction(V); // map from G to GV
-    stabG := stabA @@ gvMap; // makes the stabilizer subgroup as a subgroup of G
-
-    // stabilizer subgroup acting on W
-    if not IsTrivial(stabG) then
-        W, g := GModule(stabG, R, 6);
-        GW := ActionGroup(W);
-
-        Wa := sub<W | [g((a@@f)*(c@@f) + (c@@f)^2) : c in V]>;
-        Q, q := quo<W | Wa>;
-        GQ := ActionGroup(Q);
-
-        // list of all orbits of group action
-        orbit := Orbits(GQ);
-
-        // adds one orbit representative from each orbit to list
-        for rep in orbit do
-            PointCount(2, a, rep);
-        end for;
-    else
-        // Append(~orbitsList, a);
-        // Append(~orbitRep, Random(W));
-        // Append(~orbitRepList, orbitRep);
-        // num_orbits := num_orbits + 1;
-    end if;
-
+for rep in orbitRepList do
+	PointCount(2, rep[1], rep[2]);
 end for;
