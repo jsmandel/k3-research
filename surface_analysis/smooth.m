@@ -20,7 +20,7 @@ GVorbreps := [GVorbits[i][1] : i in [1..#GVorbits]];
 // Returns a list of orbit representatives, as polynomials
 GVorbrepspoly := [(GVorbreps[i])@@f : i in [1..#GVorbreps]];
 
-smoothList := [];
+smoothList := [**];
 num_orbits := 0;
 smooth_count := 0;
 
@@ -42,6 +42,7 @@ for a in GVorbreps do
 
         // list of all orbits of group action
         orbit := Orbits(GQ);
+        pair := [*a*];
 
         // adds one orbit representative from each orbit to list
         for b in orbit do
@@ -50,28 +51,34 @@ for a in GVorbreps do
             surface_poly:=w^2+ap*w+bp;
             k3_surface := Scheme(P,surface_poly); // degree 2 K3 surface in P(1,1,1,3)
             if IsNonsingular(k3_surface) then
-                Append(~smoothList, k3_surface);
+                Append(~pair, b);
+                Append(~smoothList, pair);
                 smooth_count := smooth_count + 1;
             end if;
         end for;
         num_orbits := num_orbits + #orbit;
     else
         W, g := GModule(stabG, R, 6);
+
+        Wa := sub<W | [g((a@@f)*(c@@f) + (c@@f)^2) : c in V]>;
+        Q, q := quo<W | Wa>;
+        pair := [*a*];
+
         b := Random(W);
-        bp := b@@q;
+        bp := ringHom((b@@q)@@g);
         surface_poly:=w^2+ap*w+bp;
         k3_surface := Scheme(P,surface_poly); // degree 2 K3 surface in P(1,1,1,3)
         if IsNonsingular(k3_surface) then
-            Append(~smoothList, k3_surface);
+            Append(~pair, b);
+            Append(~smoothList, pair);
             smooth_count := smooth_count +1;
         end if;
-        num_orbits := num_orbits + 1;
     end if;
     smooth_count;
 end for;
 
 // Smooth List
-file := Open("smoothList.m", "w");
+file := Open("smoothList2.m", "w");
 Puts(file, "smoothList := " cat Sprint(smoothList, "Magma") cat ";");
 Flush(file);
 smooth_count;
