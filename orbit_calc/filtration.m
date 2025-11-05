@@ -39,13 +39,13 @@ for a in GVorbreps do
         // adds one orbit representative from each orbit to list
         for rep in orbit do
             orbitRep := [*a*];
-            Append(~orbitRep, rep[1]);
+
+            Append(~orbitRep, rep[1]@@q);
             Append(~orbitRepList, orbitRep);
         end for;
         Append(~orbitsList, orbit);
         num_orbits := num_orbits + #orbit;
     else
-        stabG;
         W, g := GModule(stabG, R, 6);
         // GW := ActionGroup(W);
 
@@ -53,9 +53,12 @@ for a in GVorbreps do
         Q, q := quo<W | Wa>;
         // GQ := ActionGroup(Q);
 
-        orbitRep := [*a*];
-        Append(~orbitRep, Random(W));
-        Append(~orbitRepList, orbitRep);
+        for b in Q do
+            orbitRep := [*a*];
+            Append(~orbitRep, b@@q);
+            Append(~orbitRepList, orbitRep);
+        end for;
+        
         num_orbits := num_orbits + #Q;  // for now
     end if;
 
@@ -67,7 +70,7 @@ end for;
 // Flush(f);
 
 // Orbit Rep List
-f := Open("orbitReps2.m", "w");
-Puts(f, "orbitRepList := " cat Sprint(orbitRepList, "Magma") cat ";");
-Flush(f);
-num_orbits;
+// f := Open("orbitReps2.m", "w");
+// Puts(f, "orbitRepList := " cat Sprint(orbitRepList, "Magma") cat ";");
+// Flush(f);
+// num_orbits;
