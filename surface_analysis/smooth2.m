@@ -48,8 +48,8 @@ for a in GVorbreps do
             bp := b@@g;
             orbitRep := [*a*];
             Append(~orbitRep, bp);
-            Append(~orbitRepList, orbitRep);
-            Append(~orbitfora, bp);
+            Append(~orbitRepList, orbitRep); // list of pairs (a,b) for orbit representatives
+            Append(~orbitfora, bp); // orbitsList is a list of 22 lists of orbits, storing only the representative for b in each orbit
         end for;
         Append(~orbitsList, orbitfora);
         num_orbits := num_orbits + #orbit;
