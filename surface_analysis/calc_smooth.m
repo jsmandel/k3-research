@@ -158,36 +158,39 @@ end function;
 //////////////////////////////////////////////
 
 B, h :=GModule(G, R, 6);
-binFile := "smoothList.bin";
+binFile := "smoothOrbitList.bin";
 out := Open(binFile, "wb");
 
-// for pair in smoothList do
-//     a := pair[1];
-//     b := pair[2];
-//     bytes := serialize(polypairtolist(a,b));
-//     Write(out, bytes);
-// end for;
-
-testa := f((smoothList[5])[1]);
-testa;
-testb := h((smoothList[5])[2]); 
-testb;
-bytes := serialize(polypairtolist(testa,testb));
-WriteBytes(out, bytes);
+for pair in smoothList do
+    a := f(pair[1]);
+    b := h(pair[2]);
+    bytes := serialize(polypairtolist(a,b));
+    WriteBytes(out, bytes);
+end for;
 delete out;
+
+
+// // WORKING test case for single item from list
+// testa := f((smoothList[5])[1]);
+// testa;
+// testb := h((smoothList[5])[2]); 
+// testb;
+// bytes := serialize(polypairtolist(testa,testb));
+// WriteBytes(out, bytes);
+// delete out;
 
 // delete out;
 print "Wrote";
 
-test := Open(binFile, "rb");
-smoothBin := ReadBytes(test, 5);
-delete test;
+// test := Open(binFile, "rb");
+// smoothBin := ReadBytes(test, 5);
+// delete test;
 
-smoothResult := [];
-// pos := 1;
-block := smoothBin[1..5];
-result := deserialize(block);
-resulta := result[1]; resultb := result[2];
-polya := &+[resulta[i]*MonomialsOfDegree(R,3)[i] : i in [1..10]];
-polyb := &+[resultb[i]*MonomialsOfDegree(R,6)[i] : i in [1..28]];
-polya; polyb;
+// smoothResult := [];
+// // pos := 1;
+// block := smoothBin[1..5];
+// result := deserialize(block);
+// resulta := result[1]; resultb := result[2];
+// polya := &+[resulta[i]*MonomialsOfDegree(R,3)[i] : i in [1..10]];
+// polyb := &+[resultb[i]*MonomialsOfDegree(R,6)[i] : i in [1..28]];
+// polya; polyb;
