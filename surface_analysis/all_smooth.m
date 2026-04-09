@@ -1,4 +1,4 @@
-k := FiniteField(2);
+k := FiniteField(2); 
 G := GL(3, k);
 R<[x]> := PolynomialRing(k,3);
 V, f := GModule(G, R, 3);
