@@ -2,7 +2,7 @@ k := FiniteField(2);
 G := GL(3, k);
 R<[x]> := PolynomialRing(k,3);
 
-binFile := "allSmoothList.bin";
+binFile := "/Users/jordanmandel/Desktop/allSmoothList.bin";
 f := Open(binFile, "rb");
 smoothList := [];
 
@@ -35,7 +35,6 @@ while true do
     resulta := result[1]; resultb := result[2];
     polya := &+[resulta[i]*MonomialsOfDegree(R,3)[i] : i in [1..10]];
     polyb := &+[resultb[i]*MonomialsOfDegree(R,6)[i] : i in [1..28]];
-    polya; polyb;
     Append(~pair, polya); Append(~pair, polyb); 
     Append(~smoothList, pair);
 
