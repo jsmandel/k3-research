@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <fstream>
 #include <vector>
+#include "tableio.h"
 
 // Exponent array for a (degree 3) 
 static const int CUBIC_EXP[10][3] = {
@@ -40,14 +41,67 @@ std::vector<K3> load_k3s(const std::string& path) {
     return out;
 }
 
+
+unsigned** mult;
+unsigned** quadratic_roots;
+
+unsigned eval_at(const uint8_t* coef, const int exp_table[][3], int nmono,
+                 unsigned x0, unsigned x1, unsigned x2) {
+    // cache powers up to 6
+    unsigned p0[7] = {1}, p1[7] = {1}, p2[7] = {1};
+    for (int e = 1; e <= 6; e++) {
+        p0[e] = mult[p0[e-1]][x0];
+        p1[e] = mult[p1[e-1]][x1];
+        p2[e] = mult[p2[e-1]][x2];
+    }
+    unsigned acc = 0;
+    for (int i = 0; i < nmono; i++) {
+        if (!coef[i]) continue;
+        unsigned m = mult[ p0[exp_table[i][0]] ][
+                     mult[ p1[exp_table[i][1]] ][ p2[exp_table[i][2]] ] ];
+        acc ^= m;     // sum in characteristic 2
+    }
+    return acc;
+}
+
+int count_points(const K3& s, unsigned q) {
+    auto fibre = [&](unsigned x, unsigned y, unsigned z) -> int {
+        unsigned f3 = eval_at(s.a_coef, CUBIC_EXP, 10, x, y, z);
+        unsigned f6 = eval_at(s.b_coef, SEXTIC_EXP, 28, x, y, z);
+        return (int)quadratic_roots[f3][f6];
+    };
+    int total = 0;
+    total += fibre(0, 0, 1);
+    for (unsigned z = 0; z < q; z++) total += fibre(0, 1, z);
+    for (unsigned y = 0; y < q; y++)
+        for (unsigned z = 0; z < q; z++)
+            total += fibre(1, y, z);
+    return total;
+}
+
+
 int main() {
+    // auto v = load_k3s("/Users/jordanmandel/Desktop/allSmoothList.bin");
+    // printf("loaded %zu surfaces\n", v.size());
+    // for (int s = 0; s < 3; s++) {
+    //     printf("surface %d  a:", s);
+    //     for (int i = 0; i < 10; i++) printf(" %d", v[s].a_coef[i]);
+    //     printf("\n           b:");
+    //     for (int i = 0; i < 28; i++) printf(" %d", v[s].b_coef[i]);
+    //     printf("\n");
+    // }
+
     auto v = load_k3s("/Users/jordanmandel/Desktop/allSmoothList.bin");
     printf("loaded %zu surfaces\n", v.size());
-    for (int s = 0; s < 3; s++) {
-        printf("surface %d  a:", s);
-        for (int i = 0; i < 10; i++) printf(" %d", v[s].a_coef[i]);
-        printf("\n           b:");
-        for (int i = 0; i < 28; i++) printf(" %d", v[s].b_coef[i]);
-        printf("\n");
+
+    // ----- Test over F_2 -----
+    mult = read_table(2, 2, std::string("mult_2"));
+    printf("\n=== F_2 evaluation of surface 0 ===\n");
+    int pts[7][3] = {{0,0,1},{0,1,0},{0,1,1},{1,0,0},{1,0,1},{1,1,0},{1,1,1}};
+    for (int k = 0; k < 7; k++) {
+        unsigned f3 = eval_at(v[0].a_coef, CUBIC_EXP,  10, pts[k][0], pts[k][1], pts[k][2]);
+        unsigned f6 = eval_at(v[0].b_coef, SEXTIC_EXP, 28, pts[k][0], pts[k][1], pts[k][2]);
+        printf("  [%u:%u:%u]  f3=%u  f6=%u\n", pts[k][0], pts[k][1], pts[k][2], f3, f6);
     }
+
 }
