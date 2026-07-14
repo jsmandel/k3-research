@@ -54,7 +54,7 @@ AllUnitModulus := function(mods)
 end function;
 
 // --- outputs ---
-WeilPolys := [];                     // list of <K3index, WeilPoly, sign>
+Determined := [];                    // indices of K3 surfaces whose Weil polynomial is uniquely determined
 NeedMore  := [ [] : k in [1..11] ];  // NeedMore[k]: surfaces needing k extra counts
                                      //  (i.e. point counts up through F_{p^(11+k)})
 
@@ -126,14 +126,14 @@ for j in [1..upper] do
     end if;
 
     if determined then
-        Append(~WeilPolys, <j, resolved_poly, resolved_sign>);
+        Append(~Determined, j);
     end if;
 end for;
 
 // -------- report --------
 printf "\n===== SUMMARY =====\n";
 printf "Surfaces processed:    %o\n", upper;
-printf "Weil poly determined:  %o\n", #WeilPolys;
+printf "Determined: %o\n", #Determined;
 total_pending := 0;
 for k in [1..11] do
     total_pending +:= #NeedMore[k];
@@ -159,8 +159,8 @@ Need21 := NeedMore[10];
 Need22 := NeedMore[11];
 
 // Write the WeilPolys and the aggregate NeedMore list
-PrintFile("weil_results.m",
-    "WeilPolys := " * Sprint(WeilPolys) * ";\n" : Overwrite := true);
+PrintFile("determined.m",
+    "Determined := " * Sprint(Determined) * ";\n" : Overwrite := true);
 PrintFile("weil_results.m",
     "NeedMore := " * Sprint(NeedMore) * ";\n");
 
@@ -178,5 +178,5 @@ PrintFile("need_p21.m", "Need21 := " * Sprint(Need21) * ";\n" : Overwrite := tru
 PrintFile("need_p22.m", "Need22 := " * Sprint(Need22) * ";\n" : Overwrite := true);
 
 printf "\nDone. Files written:\n";
-printf "  weil_results.m  (WeilPolys, NeedMore)\n";
+printf "  determined.m  (WeilPolys, NeedMore)\n";
 printf "  need_p12.m ... need_p22.m  (individual bucket lists)\n";
